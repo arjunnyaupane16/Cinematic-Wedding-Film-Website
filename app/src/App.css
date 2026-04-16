@@ -1,9 +1,7 @@
 /* App-specific styles */
 
 /* Smooth scroll behavior */
-html {
-  scroll-behavior: smooth;
-}
+/* html { scroll-behavior: smooth; } */
 
 /* Selection color */
 ::selection {

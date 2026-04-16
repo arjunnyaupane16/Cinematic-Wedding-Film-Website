@@ -18,30 +18,36 @@ function AppRoutes() {
   useEffect(() => {
     // Ultra-smooth scrolling setup
     const lenis = new Lenis({
-      duration: 2.2,
-      easing: (t) => (t === 1 ? 1 : 1 - Math.pow(2, -12 * t)),
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 0.6,
+      wheelMultiplier: 1,
     })
+
+    // Expose lenis to window for use in other components
+    ;(window as any).lenis = lenis
+
+    function raf(time: number) {
+      lenis.raf(time)
+      requestAnimationFrame(raf)
+    }
+
+    requestAnimationFrame(raf)
 
     lenis.on('scroll', ScrollTrigger.update)
-
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000)
-    })
 
     gsap.ticker.lagSmoothing(0)
 
     return () => {
       lenis.destroy()
-      gsap.ticker.remove(lenis.raf)
+      delete (window as any).lenis
     }
   }, [])
 
   return (
-    <div key={location.pathname} className="route-transition">
+    <div className="route-transition">
       <FloatingPetals count={40} />
       <CustomCursor />
       <Routes>

@@ -287,8 +287,18 @@ function App() {
   const goToSection = (id: string) => {
     const el = document.getElementById(id)
     if (!el) return
-    // Lenis handles smoothness globally; avoid double-smoothing jitter.
-    el.scrollIntoView({ behavior: 'auto', block: 'start' })
+    
+    // Use exposed Lenis instance if available for perfectly smooth scroll
+    const lenis = (window as any).lenis
+    if (lenis) {
+      lenis.scrollTo(el, {
+        offset: 0,
+        duration: 2,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+      })
+    } else {
+      el.scrollIntoView({ behavior: 'auto', block: 'start' })
+    }
   }
 
   const nextSlide = useCallback(() => {
