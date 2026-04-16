@@ -10,6 +10,7 @@ import { SearchOverlay } from './components/wedding/SearchOverlay'
 import type { WeddingNavSection } from './components/wedding/nav-types'
 import { weddingConfig } from './config/wedding'
 import { LazyImage } from './components/wedding/LazyImage'
+import { Magnetic } from './components/wedding/Magnetic'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -95,10 +96,24 @@ function App() {
         { opacity: 1, scale: 1, rotation: 0, duration: 3.2, ease: 'power2.out', delay: 0.45 }
       )
 
-      // Title reveal
-      gsap.fromTo('.hero-title-line',
+      // Character reveal for title
+      gsap.fromTo('.hero-char',
+        { opacity: 0, y: 30, rotateX: -90 },
+        { 
+          opacity: 1, 
+          y: 0, 
+          rotateX: 0, 
+          duration: 1.5, 
+          ease: 'power4.out', 
+          stagger: 0.05,
+          delay: 1.2
+        }
+      )
+
+      // Title lines (the meta text)
+      gsap.fromTo('.hero-title-line:not(.main-title)',
         { clipPath: 'inset(0 100% 0 0)' },
-        { clipPath: 'inset(0 0% 0 0)', duration: 2.2, ease: 'power2.out', delay: 1.15, stagger: 0.32 }
+        { clipPath: 'inset(0 0% 0 0)', duration: 2.2, ease: 'power2.out', delay: 1.8, stagger: 0.32 }
       )
 
       // Scroll indicator
@@ -116,6 +131,30 @@ function App() {
         { opacity: 0, y: 20, rotate: -8 },
         { opacity: 0.9, y: 0, rotate: 0, duration: 1.8, stagger: 0.08, ease: 'power2.out', delay: 0.75 }
       )
+
+      // Mouse Parallax for Rose
+      const handleMouseMove = (e: MouseEvent) => {
+        const { clientX, clientY } = e
+        const xPos = (clientX / window.innerWidth - 0.5) * 40
+        const yPos = (clientY / window.innerHeight - 0.5) * 40
+        
+        gsap.to(roseRef.current, {
+          x: xPos,
+          y: yPos,
+          duration: 1.5,
+          ease: 'power2.out'
+        })
+        
+        gsap.to('.hero-title-line', {
+          x: xPos * 0.5,
+          y: yPos * 0.5,
+          duration: 1.5,
+          ease: 'power2.out'
+        })
+      }
+
+      window.addEventListener('mousemove', handleMouseMove)
+      return () => window.removeEventListener('mousemove', handleMouseMove)
     }, heroRef)
 
     return () => ctx.revert()
@@ -175,8 +214,10 @@ function App() {
           })
           gsap.to(section.querySelectorAll('.curtain-reveal'), {
             clipPath: 'inset(0 0% 0 0)',
+            scale: 1,
+            rotate: 0,
             duration: 1.75,
-            ease: 'power1.inOut'
+            ease: 'power2.inOut'
           })
         },
         once: true
@@ -578,8 +619,12 @@ function App() {
         {/* Text Overlay */}
         <div ref={titleRef} className="relative z-10 text-center px-4">
           <div className="text-white/95 text-shadow">
-            <div className="hero-title-line block text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-3" style={{ fontFamily: "'Great Vibes', cursive", letterSpacing: '0.02em' }}>
-              {weddingConfig.groomName} &amp; {weddingConfig.partnerName}
+            <div className="hero-title-line main-title block text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-3" style={{ fontFamily: "'Great Vibes', cursive", letterSpacing: '0.02em' }}>
+              {`${weddingConfig.groomName} & ${weddingConfig.partnerName}`.split('').map((char, i) => (
+                <span key={i} className="hero-char inline-block whitespace-pre" style={{ perspective: '1000px' }}>
+                  {char}
+                </span>
+              ))}
             </div>
             <h1 className="hero-title-line block text-xs sm:text-sm md:text-base font-light tracking-[0.45em] uppercase text-white/80" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               Wedding Film
@@ -594,13 +639,15 @@ function App() {
               <span className="hidden sm:inline text-white/30">•</span>
               <span className="text-[10px] sm:text-xs tracking-[0.2em] uppercase text-white/70">{weddingConfig.venueName}</span>
             </div>
-            <button
-              type="button"
-              onClick={() => openDetail('rsvp-notes')}
-              className="hero-title-line inline-block mt-7 text-[10px] tracking-[0.28em] uppercase border border-white/35 px-5 py-3 text-white/90 hover:bg-white/10 transition-all btn-glow"
-            >
-              RSVP Now
-            </button>
+            <Magnetic>
+              <button
+                type="button"
+                onClick={() => openDetail('rsvp-notes')}
+                className="hero-title-line inline-block mt-7 text-[10px] tracking-[0.28em] uppercase border border-white/35 px-5 py-3 text-white/90 hover:bg-white/10 transition-all btn-glow"
+              >
+                RSVP Now
+              </button>
+            </Magnetic>
           </div>
         </div>
 
