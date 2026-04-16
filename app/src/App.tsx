@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ChevronLeft, ChevronRight, MapPin, Calendar } from 'lucide-react'
@@ -288,8 +288,14 @@ function App() {
     el.scrollIntoView({ behavior: 'auto', block: 'start' })
   }
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % carouselSlides.length)
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length)
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % carouselSlides.length)
+  }, [carouselSlides.length])
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length)
+  }, [carouselSlides.length])
+
   const openDetail = (slug: string) => navigate(`/details/${slug}`)
 
   const clearLongPressTimer = () => {
