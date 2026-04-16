@@ -932,6 +932,126 @@ function App() {
         </div>
       </section>
 
+      {/* ── LOVE & ROSES SECTION ── */}
+      <section id="love" className="animate-section relative bg-black overflow-hidden py-24 lg:py-40">
+        {/* Animated rising hearts background */}
+        <div className="love-particles" aria-hidden="true">
+          {Array.from({ length: 18 }).map((_, i) => (
+            <span
+              key={i}
+              className="love-heart"
+              style={{
+                left: `${5 + i * 5.2}%`,
+                bottom: `${-8 + (i % 3) * 5}%`,
+                animationDuration: `${8 + (i % 5) * 2.4}s`,
+                animationDelay: `${i * 0.45}s`,
+                fontSize: `${10 + (i % 4) * 4}px`,
+              }}
+            >
+              ♥
+            </span>
+          ))}
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+          {/* Heading */}
+          <div className="text-center mb-16">
+            <p className="fade-up text-[10px] tracking-[0.5em] uppercase text-[#8B1538] opacity-0 translate-y-8 mb-4">
+              <span className="rose-stamp">✿</span>&nbsp;A Love Story&nbsp;<span className="rose-stamp">✿</span>
+            </p>
+            <h2 className="fade-up text-4xl md:text-6xl lg:text-7xl font-light tracking-[0.15em] uppercase opacity-0 translate-y-8" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+              Written in Roses
+            </h2>
+            <div className="rose-divider mt-8 max-w-lg mx-auto">
+              <span className="text-[#8B1538] heartbeat text-xl">❧</span>
+            </div>
+          </div>
+
+          {/* Large hero image – couple with roses */}
+          <div className="curtain-reveal mb-4 rose-reveal-frame grain-overlay" style={{ clipPath: 'inset(0 100% 0 0)' }}>
+            <div className="aspect-[21/9] overflow-hidden relative">
+              <LazyImage
+                src="/images/wedding-couple-roses.jpg"
+                alt="Couple surrounded by roses"
+                className="w-full h-full object-cover ken-burns"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/40 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
+              {/* Floating text overlay */}
+              <div className="absolute bottom-8 left-8 lg:bottom-12 lg:left-16">
+                <p className="text-[10px] tracking-[0.45em] uppercase text-[#8B1538] mb-2">Chandraprakash &amp; Partner</p>
+                <p className="text-2xl lg:text-4xl font-light text-white/90" style={{ fontFamily: "'Great Vibes', cursive" }}>
+                  Forever begins here
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Grid of two smaller images */}
+          <div className="grid md:grid-cols-2 gap-4 mt-4">
+            {/* Macro roses */}
+            <div className="curtain-reveal gallery-tilt rose-reveal-frame grain-overlay" style={{ clipPath: 'inset(0 100% 0 0)' }}>
+              <div className="aspect-[4/3] overflow-hidden relative">
+                <LazyImage
+                  src="/images/roses-macro-dark.jpg"
+                  alt="Deep red roses in cinematic lighting"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-6 left-6">
+                  <p className="text-[10px] tracking-[0.4em] uppercase text-[#8B1538]">The Roses</p>
+                  <p className="text-lg font-light text-white/85 mt-1" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                    Deep, Crimson, Eternal
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Romantic vows */}
+            <div className="curtain-reveal gallery-tilt rose-reveal-frame grain-overlay" style={{ clipPath: 'inset(0 100% 0 0)' }}>
+              <div className="aspect-[4/3] overflow-hidden relative">
+                <LazyImage
+                  src="/images/romantic-couple-vows.jpg"
+                  alt="Couple exchanging vows in candlelight"
+                  className="w-full h-full object-cover ken-burns"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-6 left-6">
+                  <p className="text-[10px] tracking-[0.4em] uppercase text-[#8B1538]">The Vows</p>
+                  <p className="text-lg font-light text-white/85 mt-1" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                    Words that last forever
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quote strip */}
+          <div className="mt-16 text-center">
+            <blockquote className="fade-up max-w-3xl mx-auto opacity-0 translate-y-8">
+              <p className="text-xl md:text-3xl font-light text-white/80 leading-relaxed italic" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                "In all the world, there is no heart for me like yours. In all the world, there is no love for you like mine."
+              </p>
+              <footer className="mt-6 text-[11px] tracking-[0.35em] uppercase text-[#8B1538]">— Maya Angelou</footer>
+            </blockquote>
+          </div>
+
+          {/* Stats row */}
+          <div className="mt-16 grid grid-cols-3 gap-8 border border-white/10 divide-x divide-white/10">
+            {[
+              { num: '∞', label: 'Years Together' },
+              { num: '❤', label: 'Hearts as One', cls: 'heartbeat' },
+              { num: '1', label: 'Perfect Day' },
+            ].map(({ num, label, cls }) => (
+              <div key={label} className="text-center py-8">
+                <p className={`text-4xl md:text-5xl font-light text-[#8B1538] mb-3 ${cls ?? ''}`} style={{ fontFamily: "'Cormorant Garamond', serif" }}>{num}</p>
+                <p className="text-[10px] tracking-[0.35em] uppercase text-white/50">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Continue Your Journey */}
       <section id="rsvp" className="animate-section bg-black py-24 lg:py-32 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">

@@ -528,11 +528,244 @@
   
   /* Button Glow */
   .btn-glow {
-    transition: all 0.3s var(--ease-silk);
+    transition: all 0.35s var(--ease-silk);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .btn-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(139, 21, 56, 0.25) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.35s;
+  }
+
+  .btn-glow:hover::before {
+    opacity: 1;
   }
   
   .btn-glow:hover {
-    box-shadow: 0 0 20px rgba(139, 21, 56, 0.4);
+    box-shadow: 0 0 28px rgba(139, 21, 56, 0.55), 0 0 60px rgba(139, 21, 56, 0.2);
+    border-color: rgba(139, 21, 56, 0.6);
+    color: #fff;
+  }
+
+  /* ── HEARTBEAT PULSE on rose accent elements ── */
+  .heartbeat {
+    animation: heartbeat 2.4s ease-in-out infinite;
+  }
+
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    14%       { transform: scale(1.08); }
+    28%       { transform: scale(1);   }
+    42%       { transform: scale(1.05); }
+    56%       { transform: scale(1);   }
+  }
+
+  /* ── BREATHING GLOW ── */
+  .glow-breathe {
+    animation: glowBreathe 3.5s ease-in-out infinite;
+  }
+
+  @keyframes glowBreathe {
+    0%, 100% { box-shadow: 0 0 18px rgba(139,21,56,0.3), 0 0 40px rgba(139,21,56,0.1); }
+    50%       { box-shadow: 0 0 40px rgba(139,21,56,0.6), 0 0 80px rgba(139,21,56,0.25); }
+  }
+
+  /* ── LOVE FLOAT (for ♥ icons) ── */
+  .love-float {
+    animation: loveFloat 4s ease-in-out infinite;
+  }
+
+  @keyframes loveFloat {
+    0%, 100% { transform: translateY(0) scale(1) rotate(-3deg); }
+    33%       { transform: translateY(-12px) scale(1.07) rotate(3deg); }
+    66%       { transform: translateY(-6px) scale(0.97) rotate(-1deg); }
+  }
+
+  /* ── TYPEWRITER cursor blink ── */
+  .typewriter-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: #8B1538;
+    margin-left: 2px;
+    animation: blink 1s step-end infinite;
+    vertical-align: middle;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+
+  /* ── SPARKLE ── */
+  .sparkle {
+    position: relative;
+  }
+
+  .sparkle::before,
+  .sparkle::after {
+    content: '✦';
+    position: absolute;
+    font-size: 10px;
+    color: rgba(139,21,56,0.7);
+    animation: sparklePop 2.5s ease-in-out infinite;
+  }
+
+  .sparkle::before { top: -10px; left: -12px; animation-delay: 0s; }
+  .sparkle::after  { top: -10px; right: -12px; animation-delay: 1.25s; }
+
+  @keyframes sparklePop {
+    0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+    50%       { opacity: 1; transform: scale(1.4) rotate(180deg); }
+  }
+
+  /* ── ROSE REVEAL (image hover reveal with border petals) ── */
+  .rose-reveal-frame {
+    position: relative;
+    transition: transform 0.5s var(--ease-royal);
+  }
+
+  .rose-reveal-frame::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 2px;
+    background: linear-gradient(135deg, rgba(139,21,56,0.0) 0%, rgba(139,21,56,0.5) 50%, rgba(139,21,56,0.0) 100%);
+    background-size: 200% 200%;
+    opacity: 0;
+    transition: opacity 0.4s;
+    z-index: 1;
+    pointer-events: none;
+    animation: roseBorderSpin 4s linear infinite paused;
+  }
+
+  .rose-reveal-frame:hover::before {
+    opacity: 1;
+    animation-play-state: running;
+  }
+
+  @keyframes roseBorderSpin {
+    0%   { background-position: 0% 0%; }
+    100% { background-position: 200% 200%; }
+  }
+
+  /* ── LOVE SECTION particles CSS layer ── */
+  .love-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .love-heart {
+    position: absolute;
+    color: rgba(139,21,56,0.55);
+    font-size: 12px;
+    animation: loveRise linear infinite;
+    will-change: transform, opacity;
+  }
+
+  @keyframes loveRise {
+    0%   { transform: translateY(0) scale(0.6) rotate(-10deg); opacity: 0.6; }
+    50%  { transform: translateY(-45vh) scale(1.1) rotate(10deg); opacity: 0.35; }
+    100% { transform: translateY(-90vh) scale(0.5) rotate(-5deg); opacity: 0; }
+  }
+
+  /* ── SECTION SEPARATOR – animated rose vine line ── */
+  .rose-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0;
+  }
+
+  .rose-divider::before,
+  .rose-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(139,21,56,0.5), transparent);
+    animation: dividerGlow 3s ease-in-out infinite alternate;
+  }
+
+  @keyframes dividerGlow {
+    0%   { opacity: 0.4; }
+    100% { opacity: 1; box-shadow: 0 0 8px rgba(139,21,56,0.4); }
+  }
+
+  /* ── GALLERY TILT on hover ── */
+  .gallery-tilt {
+    transition: transform 0.4s var(--ease-elastic), box-shadow 0.4s;
+  }
+
+  .gallery-tilt:hover {
+    transform: perspective(800px) rotateY(-4deg) rotateX(2deg) scale(1.03);
+    box-shadow: 8px 16px 40px rgba(0,0,0,0.6), 0 0 20px rgba(139,21,56,0.2);
+  }
+
+  /* ── STAGGERED FADE for grids ── */
+  .stagger-fade > * {
+    opacity: 0;
+    transform: translateY(24px);
+    animation: staggerReveal 0.8s var(--ease-royal) forwards;
+  }
+
+  .stagger-fade > *:nth-child(1) { animation-delay: 0.05s; }
+  .stagger-fade > *:nth-child(2) { animation-delay: 0.12s; }
+  .stagger-fade > *:nth-child(3) { animation-delay: 0.19s; }
+  .stagger-fade > *:nth-child(4) { animation-delay: 0.26s; }
+  .stagger-fade > *:nth-child(5) { animation-delay: 0.33s; }
+  .stagger-fade > *:nth-child(6) { animation-delay: 0.40s; }
+
+  @keyframes staggerReveal {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── PARALLAX DEPTH LAYER ── */
+  .depth-layer {
+    will-change: transform;
+    transition: transform 0.1s linear;
+  }
+
+  /* ── IMAGE GRAIN OVERLAY ── */
+  .grain-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* ── WIPE IN from left/right ── */
+  .wipe-left  { clip-path: inset(0 100% 0 0); transition: clip-path 1.4s var(--ease-dramatic); }
+  .wipe-right { clip-path: inset(0 0 0 100%); transition: clip-path 1.4s var(--ease-dramatic); }
+  .wipe-left.in, .wipe-right.in { clip-path: inset(0 0 0 0); }
+
+  /* ── COUNT-UP number ticks ── */
+  .count-up {
+    font-variant-numeric: tabular-nums;
+    transition: all 0.5s;
+  }
+
+  /* ── ROSE STAMP (small decorative) ── */
+  .rose-stamp {
+    font-size: 0.8em;
+    color: #8B1538;
+    animation: stampPulse 2s ease-in-out infinite;
+    display: inline-block;
+  }
+
+  @keyframes stampPulse {
+    0%, 100% { transform: scale(1); filter: brightness(1); }
+    50%       { transform: scale(1.15); filter: brightness(1.3); }
   }
 }
 
@@ -546,25 +779,28 @@
   
   .hero-rose,
   .ken-burns,
-  .floating-petal {
+  .floating-petal,
+  .heartbeat,
+  .glow-breathe,
+  .love-float {
     animation: none !important;
   }
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #000;
+  background: #050505;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: linear-gradient(180deg, #8B1538 0%, #4A0D1F 100%);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #444;
+  background: linear-gradient(180deg, #a31d44 0%, #6d1030 100%);
 }

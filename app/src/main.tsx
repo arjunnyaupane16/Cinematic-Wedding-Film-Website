@@ -5,12 +5,14 @@ import './index.css'
 import App from './App.tsx'
 import { DetailPage } from './pages/DetailPage.tsx'
 import { CustomCursor } from './components/wedding/CustomCursor'
+import { FloatingPetals } from './components/wedding/FloatingPetals'
 
 function AppRoutes() {
   const location = useLocation()
 
   return (
     <div key={location.pathname} className="route-transition">
+      <FloatingPetals count={40} />
       <CustomCursor />
       <Routes>
         <Route path="/" element={<App />} />
