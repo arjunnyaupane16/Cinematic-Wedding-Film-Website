@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
+import { ChevronLeft, ChevronRight, MapPin, Calendar } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import './App.css'
 import { TopNav } from './components/wedding/TopNav'
 import { MobileMenu } from './components/wedding/MobileMenu'
@@ -23,6 +23,7 @@ function App() {
   const [activeSection, setActiveSection] = useState('hero')
   const [a11yMode, setA11yMode] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [activePhotoDetail, setActivePhotoDetail] = useState<string | null>(null)
   const heroRef = useRef<HTMLDivElement>(null)
   const roseRef = useRef<HTMLVideoElement>(null)
   const titleRef = useRef<HTMLDivElement>(null)
@@ -105,6 +106,16 @@ function App() {
         { opacity: 0, y: 20 },
         { opacity: 1, y: 0, duration: 1.4, ease: 'power2.out', delay: 3.9 }
       )
+
+      gsap.fromTo('.hero-atmosphere',
+        { opacity: 0, scale: 0.92 },
+        { opacity: 1, scale: 1, duration: 2.6, ease: 'power2.out', stagger: 0.18, delay: 0.3 }
+      )
+
+      gsap.fromTo('.hero-petal',
+        { opacity: 0, y: 20, rotate: -8 },
+        { opacity: 0.9, y: 0, rotate: 0, duration: 1.8, stagger: 0.08, ease: 'power2.out', delay: 0.75 }
+      )
     }, heroRef)
 
     return () => ctx.revert()
@@ -125,6 +136,42 @@ function App() {
             duration: 1.25,
             ease: 'power2.out',
             stagger: 0.14
+          })
+          gsap.to(section.querySelectorAll('.fade-left'), {
+            opacity: 1,
+            x: 0,
+            duration: 1.2,
+            ease: 'power2.out',
+            stagger: 0.14
+          })
+          gsap.to(section.querySelectorAll('.fade-right'), {
+            opacity: 1,
+            x: 0,
+            duration: 1.2,
+            ease: 'power2.out',
+            stagger: 0.14
+          })
+          gsap.to(section.querySelectorAll('.scale-reveal'), {
+            opacity: 1,
+            scale: 1,
+            duration: 1.3,
+            ease: 'power3.out',
+            stagger: 0.12
+          })
+          gsap.to(section.querySelectorAll('.float-pan'), {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 1.35,
+            ease: 'power2.out',
+            stagger: 0.12
+          })
+          gsap.to(section.querySelectorAll('.line-grow'), {
+            opacity: 1,
+            scaleX: 1,
+            duration: 1,
+            ease: 'power2.out',
+            stagger: 0.1
           })
           gsap.to(section.querySelectorAll('.curtain-reveal'), {
             clipPath: 'inset(0 0% 0 0)',
@@ -200,7 +247,9 @@ function App() {
     el.scrollIntoView({ behavior: 'auto', block: 'start' })
   }
 
-  const getPhotoDetailLink = (photoId: string) => `/details/photo?id=${encodeURIComponent(photoId)}`
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % carouselSlides.length)
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length)
+  const openDetail = (slug: string) => navigate(`/details/${slug}`)
 
   const clearLongPressTimer = () => {
     if (longPressTimerRef.current !== null) {
@@ -210,29 +259,217 @@ function App() {
   }
 
   useEffect(() => {
-    return () => clearLongPressTimer()
+    const closeDetails = () => setActivePhotoDetail(null)
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target as HTMLElement | null
+      if (!target?.closest('[data-photo-reveal="true"]')) {
+        setActivePhotoDetail(null)
+      }
+    }
+    window.addEventListener('scroll', closeDetails, { passive: true })
+    window.addEventListener('pointerdown', handlePointerDown)
+    return () => {
+      clearLongPressTimer()
+      window.removeEventListener('scroll', closeDetails)
+      window.removeEventListener('pointerdown', handlePointerDown)
+    }
   }, [])
 
-  const getPhotoInteractionProps = (to: string) => ({
-    onContextMenu: (event: React.MouseEvent<HTMLAnchorElement>) => {
-      event.preventDefault()
-      navigate(to)
-    },
-    onTouchStart: () => {
-      clearLongPressTimer()
-      longPressTimerRef.current = window.setTimeout(() => {
-        navigate(to)
-      }, 420)
-    },
-    onTouchEnd: clearLongPressTimer,
-    onTouchCancel: clearLongPressTimer,
-    onTouchMove: clearLongPressTimer
-  })
+  const revealPhotoDetail = (id: string) => {
+    setActivePhotoDetail((prev) => (prev === id ? null : id))
+  }
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % carouselSlides.length)
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length)
+  const photoDetails: Record<
+    string,
+    { title: string; location: string; date: string }
+  > = {
+    'our-story-moment': {
+      title: 'Petals of Love',
+      location: 'Nepalgunj, Nepal',
+      date: 'Dec 2026'
+    },
+    'ceremony-atmosphere': {
+      title: 'First Glance',
+      location: 'Ceremony Hall',
+      date: 'Wedding Day'
+    },
+    'venue-detail': {
+      title: 'The Venue',
+      location: 'Nepalgunj Venue',
+      date: 'Reception Evening'
+    },
+    'golden-hour-moment': {
+      title: 'Golden Hour',
+      location: 'Outdoor Portrait Space',
+      date: 'Sunset Session'
+    },
+    'wedding-evening': {
+      title: 'The Celebration',
+      location: 'Main Reception',
+      date: 'Night Celebration'
+    },
+    'gallery-detail': {
+      title: 'Detail Story',
+      location: 'Portrait Studio',
+      date: 'Photo Session'
+    },
+    'quiet-portrait': {
+      title: 'Quiet Portrait',
+      location: 'Portrait Corner',
+      date: 'Before Reception'
+    },
+    'save-the-date-frame': {
+      title: 'The Save The Date',
+      location: 'Signature Visual',
+      date: 'Announcement'
+    },
+    'first-look-frame': {
+      title: 'The First Look',
+      location: 'Private Reveal',
+      date: 'Jan 2024'
+    },
+    'ceremony-portrait-frame': {
+      title: 'Ceremony Portrait',
+      location: 'Ceremony Stage',
+      date: 'Main Ceremony'
+    },
+    'florals-details-frame': {
+      title: 'Florals & Details',
+      location: 'Decor Storyline',
+      date: 'Event Styling'
+    },
+    'venue-frame': {
+      title: 'The Venue',
+      location: 'Nepalgunj Venue',
+      date: 'Wedding Weekend'
+    },
+    'evening-portraits-frame': {
+      title: 'Evening Portraits',
+      location: 'Evening Set',
+      date: 'Post-Sunset'
+    },
+    'ring-story-frame': {
+      title: 'Ring Story',
+      location: 'Detail Table',
+      date: 'Ceremony Prep'
+    },
+    'aisle-moments-frame': {
+      title: 'Aisle Moments',
+      location: 'Ceremony Aisle',
+      date: 'Vow Time'
+    },
+    'candid-smiles-frame': {
+      title: 'Candid Smiles',
+      location: 'Family & Friends',
+      date: 'Reception'
+    },
+    'quiet-vows-frame': {
+      title: 'Quiet Vows',
+      location: 'Ceremony Center',
+      date: 'Vow Exchange'
+    },
+    'reception-glow-frame': {
+      title: 'Reception Glow',
+      location: 'Reception Hall',
+      date: 'Dinner Hour'
+    },
+    'first-dance-frame': {
+      title: 'First Dance',
+      location: 'Dance Floor',
+      date: 'After Toasts'
+    },
+    'family-toasts-frame': {
+      title: 'Family Toasts',
+      location: 'Main Hall',
+      date: 'Evening Program'
+    },
+    'night-celebration-frame': {
+      title: 'Night Celebration',
+      location: 'Open Floor',
+      date: 'Late Evening'
+    },
+    'forever-frame': {
+      title: 'Forever Frame',
+      location: 'Final Portrait',
+      date: 'Wedding Night'
+    }
+  }
 
-  // Keep carousel manual-only to avoid unexpected automatic switching
+  // Cinematic Overlay Component for Moments
+  const CinemaOverlay = ({ id, label = 'MOMENTS' }: { id: string; label?: string }) => {
+    const detail = photoDetails[id]
+    if (!detail) return null
+
+    return (
+      <div
+        className={`absolute inset-0 pointer-events-none transition-opacity duration-500 ${
+          activePhotoDetail === id ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.88)_0%,rgba(0,0,0,0.72)_28%,rgba(0,0,0,0.32)_52%,rgba(0,0,0,0.08)_100%)]" />
+        <div className="absolute inset-y-0 left-0 flex w-full max-w-[32rem] items-center p-6 lg:p-10">
+          <div>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-[#8B1538]/90 font-medium mb-3">{label}</p>
+            <h3 className="cinema-title text-2xl lg:text-4xl font-light tracking-[0.08em] mb-5 text-white/95">
+              {detail.title}
+            </h3>
+
+            <div className="flex flex-wrap items-center gap-6 text-white/60">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-3 h-3 text-[#8B1538]" />
+                <span className="text-[10px] tracking-[0.2em] uppercase font-light">{detail.location}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Calendar className="w-3 h-3 text-[#8B1538]" />
+                <span className="text-[10px] tracking-[0.2em] uppercase font-light">{detail.date}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="absolute inset-0 border border-white/5" />
+      </div>
+    )
+  }
+
+  const PhotoRevealFrame = ({
+    id,
+    label,
+    className,
+    imageClassName,
+    src,
+    alt,
+    children
+  }: {
+    id: string
+    label: string
+    className: string
+    imageClassName: string
+    src: string
+    alt: string
+    children?: React.ReactNode
+  }) => (
+    <button
+      type="button"
+      data-photo-reveal="true"
+      onClick={() => revealPhotoDetail(id)}
+      onTouchStart={() => {
+        clearLongPressTimer()
+        longPressTimerRef.current = window.setTimeout(() => {
+          setActivePhotoDetail(id)
+        }, 320)
+      }}
+      onTouchEnd={clearLongPressTimer}
+      onTouchCancel={clearLongPressTimer}
+      onTouchMove={clearLongPressTimer}
+      className={`${className} text-left`}
+      aria-label={`Show details for ${photoDetails[id]?.title || alt}`}
+      aria-pressed={activePhotoDetail === id}
+    >
+      <LazyImage src={src} alt={alt} className={imageClassName} />
+      <CinemaOverlay id={id} label={label} />
+      {children}
+    </button>
+  )
 
   return (
     <div className={`min-h-screen bg-black text-white overflow-x-hidden ${a11yMode ? 'a11y-mode' : ''}`}>
@@ -357,12 +594,13 @@ function App() {
               <span className="hidden sm:inline text-white/30">•</span>
               <span className="text-[10px] sm:text-xs tracking-[0.2em] uppercase text-white/70">{weddingConfig.venueName}</span>
             </div>
-            <Link
-              to="/details/rsvp-notes"
+            <button
+              type="button"
+              onClick={() => openDetail('rsvp-notes')}
               className="hero-title-line inline-block mt-7 text-[10px] tracking-[0.28em] uppercase border border-white/35 px-5 py-3 text-white/90 hover:bg-white/10 transition-all btn-glow"
             >
               RSVP Now
-            </Link>
+            </button>
           </div>
         </div>
 
@@ -373,81 +611,80 @@ function App() {
         </div>
       </section>
 
-      {/* Art in Motion Section */}
-      <section id="story" className="animate-section min-h-screen bg-black py-24 lg:py-32">
+      {/* Art in Motion Section - Our Story */}
+      <section id="story" className="animate-section min-h-[80vh] bg-black py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* Image */}
-            <div className="curtain-reveal order-2 lg:order-1" style={{ clipPath: 'inset(0 100% 0 0)' }}>
-              <Link to={getPhotoDetailLink('our-story-moment')} className="img-hover-zoom aspect-video block" {...getPhotoInteractionProps(getPhotoDetailLink('our-story-moment'))}>
-                <LazyImage src="/images/car-exterior-1.jpg" alt="A quiet moment together" className="w-full h-full object-cover" />
-              </Link>
+          <div className="relative group">
+            <div className="curtain-reveal" style={{ clipPath: 'inset(0 100% 0 0)' }}>
+              <PhotoRevealFrame
+                id="our-story-moment"
+                label="OUR STORY"
+                className="img-hover-zoom aspect-[16/9] lg:aspect-[21/9] block relative overflow-hidden w-full"
+                imageClassName="w-full h-full object-cover"
+                src="/images/car-exterior-1.jpg"
+                alt="A quiet moment together"
+              />
             </div>
-
-            {/* Text */}
-            <div className="order-1 lg:order-2">
-              <h2 className="fade-up text-3xl md:text-4xl lg:text-5xl font-light tracking-[0.2em] uppercase mb-8 opacity-0 translate-y-8" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                Our Story
-              </h2>
-              <p className="fade-up text-base lg:text-lg font-light leading-relaxed text-white/80 opacity-0 translate-y-8">
-                Two paths met softly, then all at once. What began with small conversations and shared comfort became a love story built on patience, laughter, and quiet devotion — now arriving at one luminous promise.
+            
+            {/* Minimal Subtext Below */}
+            <div className="mt-8 max-w-2xl">
+              <p className="fade-up text-sm lg:text-base font-light leading-relaxed text-white/60 opacity-0 translate-y-8">
+                Two paths met softly, then all at once. What began with small conversations and shared comfort became a love story built on patience and quiet devotion.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Uniquely Romantic Expression Section */}
-      <section id="ceremony" className="animate-section min-h-screen bg-black py-24 lg:py-32">
+      {/* Uniquely Romantic Expression Section - Ceremony */}
+      <section id="ceremony" className="animate-section min-h-[80vh] bg-black py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="relative">
+          <div className="relative group">
             {/* Background Image */}
-            <div className="curtain-reveal aspect-[16/9] lg:aspect-[21/9]" style={{ clipPath: 'inset(0 100% 0 0)' }}>
-              <Link to={getPhotoDetailLink('ceremony-atmosphere')} className="block h-full" {...getPhotoInteractionProps(getPhotoDetailLink('ceremony-atmosphere'))}>
-                <LazyImage src="/images/car-grille.jpg" alt="Ceremony atmosphere" className="w-full h-full object-cover ken-burns" />
-              </Link>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent pointer-events-none" />
+            <div className="curtain-reveal aspect-[16/9] lg:aspect-[21/9] relative overflow-hidden" style={{ clipPath: 'inset(0 100% 0 0)' }}>
+              <PhotoRevealFrame
+                id="ceremony-atmosphere"
+                label="THE CEREMONY"
+                className="block h-full relative w-full"
+                imageClassName="w-full h-full object-cover ken-burns"
+                src="/images/car-grille.jpg"
+                alt="Ceremony atmosphere"
+              />
             </div>
 
-            {/* Text Card */}
-            <div className="lg:absolute lg:bottom-0 lg:left-0 lg:right-0 lg:p-12 mt-8 lg:mt-0">
-              <div className="glass-card p-8 lg:p-12 max-w-2xl fade-up opacity-0 translate-y-8">
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-light tracking-[0.2em] uppercase mb-6" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                  The Ceremony
-                </h2>
-                <p className="text-sm lg:text-base font-light leading-relaxed text-white/70">
-                  Join us as we exchange vows beneath soft light and gentle music. The ceremony is designed to feel intimate and cinematic — a slow, graceful moment where every glance means everything.
-                </p>
-              </div>
+            {/* Minimal Subtext Below */}
+            <div className="mt-8 max-w-2xl ml-auto text-right">
+              <p className="fade-up text-sm lg:text-base font-light leading-relaxed text-white/60 opacity-0 translate-y-8">
+                Join us beneath soft light and gentle music. A slow, graceful moment where every glance means everything.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Roadster Renaissance Section */}
-      <section id="venue" className="animate-section min-h-screen bg-black py-24 lg:py-32">
+      {/* Venue Section */}
+      <section id="venue" className="animate-section min-h-[80vh] bg-black py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* Text */}
-            <div>
-              <h2 className="fade-up text-3xl md:text-4xl lg:text-5xl font-light tracking-[0.2em] uppercase mb-8 opacity-0 translate-y-8" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                The Venue
-              </h2>
-              <div className="space-y-6">
-                <p className="fade-up text-base lg:text-lg font-normal leading-relaxed text-white/90 opacity-0 translate-y-8">
-                  A place chosen for its warmth and stillness — where architecture meets nature, and every corner feels like a frame from a film.
-                </p>
-                <p className="fade-up text-base lg:text-lg font-normal leading-relaxed text-white/90 opacity-0 translate-y-8">
-                  Expect ivory florals, blush tones, and candlelight. From ceremony to celebration, the space will guide you gently through the story of the day.
-                </p>
-              </div>
-            </div>
-
-            {/* Image */}
+          <div className="relative group">
             <div className="curtain-reveal" style={{ clipPath: 'inset(0 100% 0 0)' }}>
-              <Link to={getPhotoDetailLink('venue-detail')} className="img-hover-zoom aspect-video rounded-sm overflow-hidden block" {...getPhotoInteractionProps(getPhotoDetailLink('venue-detail'))}>
-                <LazyImage src="/images/car-interior.jpg" alt="Venue detail" className="w-full h-full object-cover" />
-              </Link>
+              <PhotoRevealFrame
+                id="venue-detail"
+                label="THE VENUE"
+                className="img-hover-zoom aspect-[16/9] lg:aspect-[21/9] block relative overflow-hidden w-full"
+                imageClassName="w-full h-full object-cover"
+                src="/images/car-interior.jpg"
+                alt="Venue detail"
+              />
+            </div>
+            
+            {/* Minimal Subtext Below */}
+            <div className="mt-8 grid lg:grid-cols-2 gap-8">
+              <p className="fade-up text-sm lg:text-base font-light leading-relaxed text-white/60 opacity-0 translate-y-8">
+                A place chosen for its warmth and stillness — where architecture meets nature, and every corner feels like a frame from a film.
+              </p>
+              <p className="fade-up text-sm lg:text-base font-light leading-relaxed text-white/60 opacity-0 translate-y-8">
+                Expect ivory florals, blush tones, and candlelight. The space will guide you gently through the story of the day.
+              </p>
             </div>
           </div>
         </div>
@@ -475,9 +712,14 @@ function App() {
             {/* Image with Divider */}
             <div className="relative lg:pl-20 lg:border-l lg:border-white/20">
               <div className="curtain-reveal" style={{ clipPath: 'inset(0 100% 0 0)' }}>
-                <Link to={getPhotoDetailLink('golden-hour-moment')} className="img-hover-zoom aspect-[4/3] block" {...getPhotoInteractionProps(getPhotoDetailLink('golden-hour-moment'))}>
-                  <LazyImage src="/images/car-rear.jpg" alt="Golden hour moment" className="w-full h-full object-cover" />
-                </Link>
+                <PhotoRevealFrame
+                  id="golden-hour-moment"
+                  label="THE DAY"
+                  className="img-hover-zoom aspect-[4/3] block relative overflow-hidden w-full"
+                  imageClassName="w-full h-full object-cover"
+                  src="/images/car-rear.jpg"
+                  alt="Golden hour moment"
+                />
               </div>
             </div>
           </div>
@@ -490,9 +732,14 @@ function App() {
           <div className="relative overflow-hidden">
             {/* Background Image */}
             <div className="aspect-[16/9] lg:aspect-[21/9]">
-              <Link to={getPhotoDetailLink('wedding-evening')} className="block h-full" {...getPhotoInteractionProps(getPhotoDetailLink('wedding-evening'))}>
-                <LazyImage src="/images/car-front.jpg" alt="Wedding evening" className="w-full h-full object-cover ken-burns" />
-              </Link>
+              <PhotoRevealFrame
+                id="wedding-evening"
+                label="THE CELEBRATION"
+                className="block h-full relative overflow-hidden w-full"
+                imageClassName="w-full h-full object-cover ken-burns"
+                src="/images/car-front.jpg"
+                alt="Wedding evening"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent pointer-events-none" />
             </div>
 
@@ -520,9 +767,14 @@ function App() {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
             {/* Left Column - Large Image */}
             <div className="curtain-reveal lg:-mt-12" style={{ clipPath: 'inset(0 100% 0 0)' }}>
-              <Link to={getPhotoDetailLink('gallery-detail')} className="img-hover-zoom aspect-[3/4] block" {...getPhotoInteractionProps(getPhotoDetailLink('gallery-detail'))}>
-                <LazyImage src="/images/car-wheel.jpg" alt="Gallery detail" className="w-full h-full object-cover" />
-              </Link>
+              <PhotoRevealFrame
+                id="gallery-detail"
+                label="GALLERY"
+                className="img-hover-zoom aspect-[3/4] block relative overflow-hidden w-full"
+                imageClassName="w-full h-full object-cover"
+                src="/images/car-wheel.jpg"
+                alt="Gallery detail"
+              />
             </div>
 
             {/* Right Column - Text + Image */}
@@ -540,9 +792,14 @@ function App() {
               </div>
 
               <div className="curtain-reveal" style={{ clipPath: 'inset(0 100% 0 0)' }}>
-                <Link to={getPhotoDetailLink('quiet-portrait')} className="img-hover-zoom aspect-video block" {...getPhotoInteractionProps(getPhotoDetailLink('quiet-portrait'))}>
-                  <LazyImage src="/images/car-top.jpg" alt="A quiet portrait" className="w-full h-full object-cover" />
-                </Link>
+                <PhotoRevealFrame
+                  id="quiet-portrait"
+                  label="PORTRAIT"
+                  className="img-hover-zoom aspect-video block relative overflow-hidden w-full"
+                  imageClassName="w-full h-full object-cover"
+                  src="/images/car-top.jpg"
+                  alt="A quiet portrait"
+                />
               </div>
             </div>
           </div>
@@ -570,14 +827,14 @@ function App() {
               >
                 {carouselSlides.map((slide, index) => (
                   <div key={index} className="w-full flex-shrink-0 px-2">
-                    <Link to={getPhotoDetailLink(slide.id)} className="aspect-[16/9] overflow-hidden relative block" {...getPhotoInteractionProps(getPhotoDetailLink(slide.id))}>
-                      <LazyImage src={slide.src} alt={slide.caption} className="w-full h-full object-cover" />
-                      <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/80 to-transparent">
-                        <p className="text-xs sm:text-sm tracking-[0.16em] uppercase text-white/90" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                          {slide.caption}
-                        </p>
-                      </div>
-                    </Link>
+                    <PhotoRevealFrame
+                      id={slide.id}
+                      label="MOMENTS"
+                      className="aspect-[16/9] overflow-hidden relative block group w-full"
+                      imageClassName="w-full h-full object-cover"
+                      src={slide.src}
+                      alt={slide.caption}
+                    />
                   </div>
                 ))}
               </div>
@@ -640,21 +897,25 @@ function App() {
               { slug: 'travel-stay', title: 'Travel & Stay', desc: 'Suggestions for arriving, parking, and nearby stays — curated for an easy weekend.', img: '/images/car-interior.jpg' },
               { slug: 'rsvp-notes', title: 'RSVP & Notes', desc: 'Kindly reply with your attendance and any dietary preferences.', img: '/images/car-rear.jpg' }
             ].map((card) => (
-              <Link
+              <div
                 key={card.slug}
-                to={`/details/${card.slug}`}
-                className="fade-up card-lift cursor-pointer group opacity-0 translate-y-8 block"
+                className="fade-up card-lift group opacity-0 translate-y-8 block"
               >
-                <div className="img-hover-zoom aspect-[4/3] mb-6 overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => openDetail(card.slug)}
+                  className="img-hover-zoom aspect-[4/3] mb-6 overflow-hidden block w-full text-left"
+                  aria-label={`Open ${card.title} details`}
+                >
                   <LazyImage src={card.img} alt={card.title} className="w-full h-full object-cover" />
-                </div>
+                </button>
                 <h3 className="text-lg font-light tracking-[0.15em] uppercase mb-3 group-hover:text-[#8B1538] transition-colors" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                   {card.title}
                 </h3>
                 <p className="text-sm font-light text-white/60 leading-relaxed">
                   {card.desc}
                 </p>
-              </Link>
+              </div>
             ))}
           </div>
         </div>
@@ -717,9 +978,9 @@ function App() {
               <div className="flex items-center flex-wrap gap-4">
                 <a href={weddingConfig.instagramUrl} target="_blank" rel="noreferrer" className="text-[11px] tracking-[0.15em] uppercase text-white/70 hover:text-[#8B1538] transition-colors">Instagram</a>
                 <button onClick={() => goToSection('gallery')} className="text-[11px] tracking-[0.15em] uppercase text-white/70 hover:text-[#8B1538] transition-colors">Gallery</button>
-                <Link to="/details/rsvp-notes" className="text-[11px] tracking-[0.2em] uppercase border border-white/20 px-4 py-2 text-white/85 hover:text-white hover:border-[#8B1538]/60 hover:bg-[#8B1538]/10 transition-all">
+                <button type="button" onClick={() => openDetail('rsvp-notes')} className="text-[11px] tracking-[0.2em] uppercase border border-white/20 px-4 py-2 text-white/85 hover:text-white hover:border-[#8B1538]/60 hover:bg-[#8B1538]/10 transition-all">
                   RSVP Now
-                </Link>
+                </button>
               </div>
             </div>
           </div>

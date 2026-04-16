@@ -1,4 +1,4 @@
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { weddingConfig } from '../config/wedding'
 import { LazyImage } from '../components/wedding/LazyImage'
@@ -289,6 +289,7 @@ const photoDetails: Record<
 
 export function DetailPage() {
   const [a11yMode, setA11yMode] = useState(false)
+  const navigate = useNavigate()
   const { slug } = useParams()
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
@@ -349,9 +350,9 @@ export function DetailPage() {
           <h1 className="mt-4 text-3xl md:text-4xl font-light tracking-[0.2em] uppercase" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
             This page doesn’t exist
           </h1>
-          <Link to="/" className="inline-block mt-10 text-xs tracking-[0.25em] uppercase link-underline text-white/80 hover:text-white">
+          <button type="button" onClick={() => navigate('/')} className="inline-block mt-10 text-xs tracking-[0.25em] uppercase link-underline text-white/80 hover:text-white">
             Back to home
-          </Link>
+          </button>
         </div>
       </div>
     )
@@ -365,9 +366,9 @@ export function DetailPage() {
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
         </div>
         <div className="absolute top-6 left-6 lg:left-12">
-          <Link to="/" className="text-[10px] tracking-[0.3em] uppercase text-white/70 hover:text-white transition-colors link-underline">
+          <button type="button" onClick={() => navigate('/')} className="text-[10px] tracking-[0.3em] uppercase text-white/70 hover:text-white transition-colors link-underline">
             Home
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -433,9 +434,9 @@ export function DetailPage() {
         </div>
 
         <div className="mt-12 flex gap-6">
-          <Link to="/" className="text-xs tracking-[0.25em] uppercase text-white/70 hover:text-white transition-colors link-underline">
+          <button type="button" onClick={() => navigate('/')} className="text-xs tracking-[0.25em] uppercase text-white/70 hover:text-white transition-colors link-underline">
             Back
-          </Link>
+          </button>
           {slug === 'save-the-date' && (
             <a href={googleCalendarUrl} target="_blank" rel="noreferrer" className="text-xs tracking-[0.2em] uppercase border border-white/25 px-4 py-2 text-white/85 hover:border-white/45 hover:text-white transition-all">
               Add to Google Calendar
@@ -463,4 +464,3 @@ export function DetailPage() {
     </div>
   )
 }
-
