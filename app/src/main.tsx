@@ -18,14 +18,12 @@ function AppRoutes() {
   useEffect(() => {
     // Ultra-smooth scrolling setup
     const lenis = new Lenis({
-      duration: 1.4,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: 2.2,
+      easing: (t) => (t === 1 ? 1 : 1 - Math.pow(2, -12 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 0.8,
-      smoothTouch: false,
-      touchMultiplier: 2,
+      wheelMultiplier: 0.6,
     })
 
     lenis.on('scroll', ScrollTrigger.update)
