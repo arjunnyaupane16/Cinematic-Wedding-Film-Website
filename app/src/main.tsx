@@ -1,7 +1,6 @@
-import { StrictMode, useEffect } from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
-import Lenis from '@studio-freight/lenis'
 import './index.css'
 import App from './App.tsx'
 import { DetailPage } from './pages/DetailPage.tsx'
