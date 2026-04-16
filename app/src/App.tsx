@@ -1032,7 +1032,7 @@ function App() {
               <p className="text-xl md:text-3xl font-light text-white/80 leading-relaxed italic" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                 "In all the world, there is no heart for me like yours. In all the world, there is no love for you like mine."
               </p>
-              <footer className="mt-6 text-[11px] tracking-[0.35em] uppercase text-[#8B1538]">— Maya Angelou</footer>
+              <footer className="mt-6 text-[11px] tracking-[0.35em] uppercase text-[#8B1538]">— Arjun Nyaupane</footer>
             </blockquote>
           </div>
 
