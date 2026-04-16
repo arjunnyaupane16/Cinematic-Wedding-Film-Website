@@ -1,0 +1,125 @@
+.fadeInUp {
+  animation: fadeInUp 1s ease;
+}
+
+.fadeInDown {
+  animation: fadeInDown 1s ease;
+}
+
+.scalePulse {
+  animation: scalePulse 1s infinite;
+}
+
+.glowShimmer {
+  animation: glowShimmer 1s linear infinite;
+}
+
+.float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.slideInLeft {
+  animation: slideInLeft 1s ease;
+}
+
+.slideInRight {
+  animation: slideInRight 1s ease;
+}
+
+.zoomIn {
+  animation: zoomIn 1s ease;
+}
+
+.rotateIn {
+  animation: rotateIn 1s ease;
+}
+
+.blurIn {
+  animation: blurIn 1s ease;
+}
+
+.parallaxDrift {
+  animation: parallaxDrift 2s ease-in-out infinite;
+}
+
+.breathe {
+  animation: breathe 2s ease-in-out infinite;
+}
+
+.shimmerWave {
+  animation: shimmerWave 2s ease;
+}
+
+.bounceIn {
+  animation: bounceIn 1s ease;
+}
+
+.flipIn {
+  animation: flipIn 1s ease;
+}
+
+.swing {
+  animation: swing 1s ease;
+}
+
+.shake {
+  animation: shake 0.5s ease;
+}
+
+.gradientFlow {
+  background: linear-gradient(270deg, #ff0080, #ff8c00);
+  background-size: 400% 400%;
+  animation: gradientFlow 15s ease infinite;
+}
+
+.neonGlow {
+  animation: neonGlow 1.5s ease infinite;
+}
+
+.spin {
+  animation: spin 2s linear infinite;
+}
+
+/* Hover effects */
+.hoverScale:hover {
+  transform: scale(1.1);
+  transition: transform 0.3s;
+}
+
+.hoverLift:hover {
+  transform: translateY(-10px);
+  transition: transform 0.3s;
+}
+
+.hoverGlow:hover {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+  transition: box-shadow 0.3s;
+}
+
+.hoverRotate:hover {
+  transform: rotate(15deg);
+  transition: transform 0.3s;
+}
+
+/* Stagger animations */
+@keyframes stagger {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Scroll Trigger Animations */
+.scrollTrigger {
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.scrollTrigger.active {
+  opacity: 1;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 768px) {
+  .fadeInUp, .fadeInDown, .scalePulse, .glowShimmer, .float, .slideInLeft, .slideInRight, .zoomIn, .rotateIn, .blurIn, .parallaxDrift, .breathe, .shimmerWave, .bounceIn, .flipIn, .swing, .shake, .gradientFlow, .neonGlow, .spin {
+    animation-duration: 0.5s;
+  }
+}
