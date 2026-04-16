@@ -1,0 +1,186 @@
+/* CINEMATIC WEDDING ANIMATIONS - CLEAN & OPTIMIZED */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(60px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-60px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.7);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+@keyframes rotateIn {
+    from {
+        opacity: 0;
+        transform: rotate(-15deg) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(0) scale(1);
+    }
+}
+@keyframes blurIn {
+    from {
+        opacity: 0;
+        filter: blur(20px);
+    }
+    to {
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+@keyframes scalePulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+@keyframes glowShimmer {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(255, 182, 193, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(255, 192, 203, 0.8);
+    }
+}
+.fadeInUp {
+    animation: fadeInUp 0.8s ease-out;
+}
+.fadeInDown {
+    animation: fadeInDown 0.8s ease-out;
+}
+.slideInLeft {
+    animation: slideInLeft 0.8s ease-out;
+}
+.slideInRight {
+    animation: slideInRight 0.8s ease-out;
+}
+.zoomIn {
+    animation: zoomIn 0.8s ease-out;
+}
+.rotateIn {
+    animation: rotateIn 0.8s ease-out;
+}
+.blurIn {
+    animation: blurIn 1s ease-out;
+}
+.scalePulse {
+    animation: scalePulse 2s ease-in-out infinite;
+}
+.float {
+    animation: float 4s ease-in-out infinite;
+}
+.glowShimmer {
+    animation: glowShimmer 3s ease-in-out infinite;
+}
+.hoverScale {
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.hoverScale:hover {
+    transform: scale(1.1);
+}
+.hoverLift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hoverLift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+.hoverGlow {
+    transition: filter 0.3s ease;
+}
+.hoverGlow:hover {
+    filter: brightness(1.2);
+    box-shadow: 0 0 20px rgba(255, 182, 193, 0.6);
+}
+.stagger-1 {
+    animation-delay: 0s;
+}
+.stagger-2 {
+    animation-delay: 0.1s;
+}
+.stagger-3 {
+    animation-delay: 0.2s;
+}
+.stagger-4 {
+    animation-delay: 0.3s;
+}
+.stagger-5 {
+    animation-delay: 0.4s;
+}
+.scrollTrigger {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.scrollTrigger.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+@media (max-width: 768px) {
+    .fadeInUp,
+    .fadeInDown,
+    .slideInLeft,
+    .slideInRight,
+    .zoomIn,
+    .rotateIn,
+    .blurIn {
+        animation-duration: 0.5s;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
