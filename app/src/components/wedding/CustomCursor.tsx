@@ -16,6 +16,7 @@ export const CustomCursor = () => {
   const ringRef = useRef<HTMLDivElement>(null)
   const [isHovered, setIsHovered] = useState(false)
   const [isClicking, setIsClicking] = useState(false)
+  const [isPhotoHover, setIsPhotoHover] = useState(false)
   const [trail, setTrail] = useState<TrailDot[]>([])
   const trailTimerRef = useRef<number | null>(null)
   const posRef = useRef({ x: 0, y: 0 })
@@ -51,13 +52,15 @@ export const CustomCursor = () => {
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement
+      const photoReveal = target.closest('[data-photo-reveal="true"]')
       const isInteractive =
         target.tagName === 'BUTTON' ||
         target.tagName === 'A' ||
         target.closest('button') ||
-        target.closest('a') ||
-        target.getAttribute('data-photo-reveal') === 'true'
-      setIsHovered(!!isInteractive)
+        target.closest('a')
+      
+      setIsHovered(!!isInteractive || !!photoReveal)
+      setIsPhotoHover(!!photoReveal)
     }
 
     const handleMouseDown = () => setIsClicking(true)
@@ -125,15 +128,23 @@ export const CustomCursor = () => {
         style={{ zIndex: 9998, transform: 'translate(-50%, -50%)' }}
       >
         <div
+          className="flex items-center justify-center overflow-hidden"
           style={{
-            width: isHovered ? '48px' : isClicking ? '20px' : '32px',
-            height: isHovered ? '48px' : isClicking ? '20px' : '32px',
+            width: isPhotoHover ? '64px' : isHovered ? '48px' : isClicking ? '20px' : '32px',
+            height: isPhotoHover ? '64px' : isHovered ? '48px' : isClicking ? '20px' : '32px',
             borderRadius: '50%',
-            border: `1px solid rgba(139,21,56,${isHovered ? '0.8' : '0.5'})`,
-            background: isHovered ? 'rgba(139,21,56,0.12)' : 'transparent',
+            border: `1px solid rgba(139,21,56,${isPhotoHover ? '1' : isHovered ? '0.8' : '0.5'})`,
+            background: isPhotoHover ? 'rgba(139,21,56,0.3)' : isHovered ? 'rgba(139,21,56,0.12)' : 'transparent',
+            backdropFilter: isPhotoHover ? 'blur(4px)' : 'none',
             transition: 'width 0.3s cubic-bezier(0.34,1.56,0.64,1), height 0.3s cubic-bezier(0.34,1.56,0.64,1), background 0.3s, border-color 0.3s',
           }}
-        />
+        >
+          {isPhotoHover && (
+            <span className="text-[8px] font-bold tracking-[0.2em] text-white animate-pulse">
+              VIEW
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Outer slow ring */}

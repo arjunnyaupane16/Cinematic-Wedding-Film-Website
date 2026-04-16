@@ -491,17 +491,13 @@ function App() {
     <button
       type="button"
       data-photo-reveal="true"
-      onClick={() => revealPhotoDetail(id)}
-      onTouchStart={() => {
-        clearLongPressTimer()
-        longPressTimerRef.current = window.setTimeout(() => {
-          setActivePhotoDetail(id)
-        }, 320)
+      onMouseEnter={() => setActivePhotoDetail(id)}
+      onMouseLeave={() => setActivePhotoDetail(null)}
+      onClick={() => {
+        // Fallback for mobile or stuck hover
+        setActivePhotoDetail(prevState => prevState === id ? null : id);
       }}
-      onTouchEnd={clearLongPressTimer}
-      onTouchCancel={clearLongPressTimer}
-      onTouchMove={clearLongPressTimer}
-      className={`${className} text-left`}
+      className={`${className} text-left group/frame cursor-none`}
       aria-label={`Show details for ${photoDetails[id]?.title || alt}`}
       aria-pressed={activePhotoDetail === id}
     >
