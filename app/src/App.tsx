@@ -979,7 +979,7 @@ function App() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
               {/* Floating text overlay */}
               <div className="absolute bottom-8 left-8 lg:bottom-12 lg:left-16">
-                <p className="text-[10px] tracking-[0.45em] uppercase text-[#8B1538] mb-2">Chandraprakash &amp; Partner</p>
+                <p className="text-[10px] tracking-[0.45em] uppercase text-[#8B1538] mb-2">Arjun &amp; Samridhhi</p>
                 <p className="text-2xl lg:text-4xl font-light text-white/90" style={{ fontFamily: "'Great Vibes', cursive" }}>
                   Forever begins here
                 </p>

@@ -1,6 +1,6 @@
 export const weddingConfig = {
   groomName: 'Arjun',
-  partnerName: 'Ananya',
+  partnerName: 'Samridhhi',
   weddingDate: 'December 14, 2026',
   weddingTime: '5:00 PM onwards',
   venueName: 'Nepalgunj, Nepal',
