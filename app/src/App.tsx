@@ -32,7 +32,6 @@ function App() {
   const roseRef = useRef<HTMLVideoElement>(null)
   const titleRef = useRef<HTMLDivElement>(null)
   const scrollTriggersRef = useRef<ScrollTrigger[]>([])
-  const longPressTimerRef = useRef<number | null>(null)
 
   // Cinematic preloader on first website visit only
   useEffect(() => {
@@ -311,33 +310,15 @@ function App() {
 
   const openDetail = (slug: string) => navigate(`/details/${slug}`)
 
-  const clearLongPressTimer = () => {
-    if (longPressTimerRef.current !== null) {
-      window.clearTimeout(longPressTimerRef.current)
-      longPressTimerRef.current = null
-    }
-  }
 
   useEffect(() => {
     const closeDetails = () => setActivePhotoDetail(null)
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = event.target as HTMLElement | null
-      if (!target?.closest('[data-photo-reveal="true"]')) {
-        setActivePhotoDetail(null)
-      }
-    }
     window.addEventListener('scroll', closeDetails, { passive: true })
-    window.addEventListener('pointerdown', handlePointerDown)
     return () => {
-      clearLongPressTimer()
       window.removeEventListener('scroll', closeDetails)
-      window.removeEventListener('pointerdown', handlePointerDown)
     }
   }, [])
 
-  const revealPhotoDetail = (id: string) => {
-    setActivePhotoDetail((prev) => (prev === id ? null : id))
-  }
 
   const photoDetails: Record<
     string,
