@@ -2,6 +2,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { weddingConfig } from '../config/wedding'
 import { LazyImage } from '../components/wedding/LazyImage'
+import { PhotoZoomModal } from '../components/wedding/PhotoZoomModal'
 
 const content: Record<
   string,
@@ -289,6 +290,7 @@ const photoDetails: Record<
 
 export function DetailPage() {
   const [a11yMode, setA11yMode] = useState(false)
+  const [zoomedPhoto, setZoomedPhoto] = useState<{ src: string, alt: string } | null>(null)
   const navigate = useNavigate()
   const { slug } = useParams()
   const location = useLocation()
@@ -361,7 +363,10 @@ export function DetailPage() {
   return (
     <div className={`min-h-screen bg-black text-white ${a11yMode ? 'a11y-mode' : ''}`}>
       <div className="relative">
-        <div className="aspect-[16/9] lg:aspect-[21/9] overflow-hidden">
+        <div 
+          className="aspect-[16/9] lg:aspect-[21/9] overflow-hidden cursor-zoom-in"
+          onClick={() => setZoomedPhoto({ src: item.image, alt: item.title })}
+        >
           <LazyImage src={item.image} alt={item.title} className="w-full h-full object-cover ken-burns" />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
         </div>
@@ -412,7 +417,11 @@ export function DetailPage() {
           </h2>
           <div className="grid md:grid-cols-3 gap-4">
             {item.gallery.map((g) => (
-              <div key={g} className="img-hover-zoom aspect-[4/5] overflow-hidden">
+              <div 
+                key={g} 
+                className="img-hover-zoom aspect-[4/5] overflow-hidden cursor-zoom-in"
+                onClick={() => setZoomedPhoto({ src: g, alt: item.title })}
+              >
                 <LazyImage src={g} alt={item.title} className="w-full h-full object-cover" />
               </div>
             ))}
@@ -461,6 +470,13 @@ export function DetailPage() {
           </div>
         )}
       </div>
+
+      <PhotoZoomModal
+        isOpen={!!zoomedPhoto}
+        onClose={() => setZoomedPhoto(null)}
+        src={zoomedPhoto?.src || ''}
+        alt={zoomedPhoto?.alt || ''}
+      />
     </div>
   )
 }

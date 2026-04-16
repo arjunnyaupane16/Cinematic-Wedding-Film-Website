@@ -11,6 +11,8 @@ import type { WeddingNavSection } from './components/wedding/nav-types'
 import { weddingConfig } from './config/wedding'
 import { LazyImage } from './components/wedding/LazyImage'
 import { Magnetic } from './components/wedding/Magnetic'
+import { PhotoZoomModal } from './components/wedding/PhotoZoomModal'
+import { ZoomIn } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -25,6 +27,7 @@ function App() {
   const [a11yMode, setA11yMode] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [activePhotoDetail, setActivePhotoDetail] = useState<string | null>(null)
+  const [zoomedPhoto, setZoomedPhoto] = useState<{ src: string, alt: string } | null>(null)
   const heroRef = useRef<HTMLDivElement>(null)
   const roseRef = useRef<HTMLVideoElement>(null)
   const titleRef = useRef<HTMLDivElement>(null)
@@ -439,44 +442,24 @@ function App() {
       title: 'Forever Frame',
       location: 'Final Portrait',
       date: 'Wedding Night'
+    },
+    'love-hero': {
+      title: 'Written in Roses',
+      location: 'Rose Garden',
+      date: 'Eternal'
+    },
+    'roses-macro': {
+      title: 'Deep Crimson',
+      location: 'Macro Detail',
+      date: 'Timeless'
+    },
+    'vows-candlelight': {
+      title: 'The Vows',
+      location: 'Candlelight Studio',
+      date: 'Forever'
     }
   }
 
-  // Cinematic Overlay Component for Moments
-  const CinemaOverlay = ({ id, label = 'MOMENTS' }: { id: string; label?: string }) => {
-    const detail = photoDetails[id]
-    if (!detail) return null
-
-    return (
-      <div
-        className={`absolute inset-0 pointer-events-none transition-opacity duration-500 ${
-          activePhotoDetail === id ? 'opacity-100' : 'opacity-0'
-        }`}
-      >
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.88)_0%,rgba(0,0,0,0.72)_28%,rgba(0,0,0,0.32)_52%,rgba(0,0,0,0.08)_100%)]" />
-        <div className="absolute inset-y-0 left-0 flex w-full max-w-[32rem] items-center p-6 lg:p-10">
-          <div>
-            <p className="text-[10px] tracking-[0.4em] uppercase text-[#8B1538]/90 font-medium mb-3">{label}</p>
-            <h3 className="cinema-title text-2xl lg:text-4xl font-light tracking-[0.08em] mb-5 text-white/95">
-              {detail.title}
-            </h3>
-
-            <div className="flex flex-wrap items-center gap-6 text-white/60">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-3 h-3 text-[#8B1538]" />
-                <span className="text-[10px] tracking-[0.2em] uppercase font-light">{detail.location}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="w-3 h-3 text-[#8B1538]" />
-                <span className="text-[10px] tracking-[0.2em] uppercase font-light">{detail.date}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="absolute inset-0 border border-white/5" />
-      </div>
-    )
-  }
 
   const PhotoRevealFrame = ({
     id,
@@ -513,7 +496,44 @@ function App() {
       aria-pressed={activePhotoDetail === id}
     >
       <LazyImage src={src} alt={alt} className={imageClassName} />
-      <CinemaOverlay id={id} label={label} />
+      <div
+        className={`absolute inset-0 pointer-events-none transition-opacity duration-500 ${
+          activePhotoDetail === id ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.88)_0%,rgba(0,0,0,0.72)_28%,rgba(0,0,0,0.32)_52%,rgba(0,0,0,0.08)_100%)]" />
+        <div className="absolute inset-y-0 left-0 flex w-full max-w-[32rem] items-center p-6 lg:p-10">
+          <div>
+            <p className="text-[10px] tracking-[0.4em] uppercase text-[#8B1538]/90 font-medium mb-3">{label}</p>
+            <h3 className="cinema-title text-2xl lg:text-4xl font-light tracking-[0.08em] mb-5 text-white/95">
+              {photoDetails[id]?.title || alt}
+            </h3>
+
+            <div className="flex flex-wrap items-center gap-6 text-white/60 mb-8">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-3 h-3 text-[#8B1538]" />
+                <span className="text-[10px] tracking-[0.2em] uppercase font-light">{photoDetails[id]?.location}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Calendar className="w-3 h-3 text-[#8B1538]" />
+                <span className="text-[10px] tracking-[0.2em] uppercase font-light">{photoDetails[id]?.date}</span>
+              </div>
+            </div>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setZoomedPhoto({ src, alt });
+              }}
+              className="pointer-events-auto flex items-center gap-3 text-[10px] tracking-[0.3em] uppercase text-white/80 border border-white/20 px-4 py-2 hover:bg-white/10 transition-all backdrop-blur-sm"
+            >
+              <ZoomIn size={14} />
+              View Fullscreen
+            </button>
+          </div>
+        </div>
+        <div className="absolute inset-0 border border-white/5" />
+      </div>
       {children}
     </button>
   )
@@ -969,12 +989,14 @@ function App() {
 
           {/* Large hero image – couple with roses */}
           <div className="curtain-reveal mb-4 rose-reveal-frame grain-overlay" style={{ clipPath: 'inset(0 100% 0 0)' }}>
-            <div className="aspect-[21/9] overflow-hidden relative">
-              <LazyImage
-                src="/images/wedding-couple-roses.jpg"
-                alt="Couple surrounded by roses"
-                className="w-full h-full object-cover ken-burns"
-              />
+            <PhotoRevealFrame
+              id="love-hero"
+              label="LOVE STORY"
+              className="aspect-[21/9] block relative overflow-hidden w-full"
+              imageClassName="w-full h-full object-cover ken-burns"
+              src="/images/wedding-couple-roses.jpg"
+              alt="Couple surrounded by roses"
+            >
               <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/40 pointer-events-none" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
               {/* Floating text overlay */}
@@ -984,19 +1006,21 @@ function App() {
                   Forever begins here
                 </p>
               </div>
-            </div>
+            </PhotoRevealFrame>
           </div>
 
           {/* Grid of two smaller images */}
           <div className="grid md:grid-cols-2 gap-4 mt-4">
             {/* Macro roses */}
             <div className="curtain-reveal gallery-tilt rose-reveal-frame grain-overlay" style={{ clipPath: 'inset(0 100% 0 0)' }}>
-              <div className="aspect-[4/3] overflow-hidden relative">
-                <LazyImage
-                  src="/images/roses-macro-dark.jpg"
-                  alt="Deep red roses in cinematic lighting"
-                  className="w-full h-full object-cover"
-                />
+              <PhotoRevealFrame
+                id="roses-macro"
+                label="DETAILS"
+                className="aspect-[4/3] block relative overflow-hidden w-full"
+                imageClassName="w-full h-full object-cover"
+                src="/images/roses-macro-dark.jpg"
+                alt="Deep red roses in cinematic lighting"
+              >
                 <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent pointer-events-none" />
                 <div className="absolute bottom-6 left-6">
                   <p className="text-[10px] tracking-[0.4em] uppercase text-[#8B1538]">The Roses</p>
@@ -1004,17 +1028,19 @@ function App() {
                     Deep, Crimson, Eternal
                   </p>
                 </div>
-              </div>
+              </PhotoRevealFrame>
             </div>
 
             {/* Romantic vows */}
             <div className="curtain-reveal gallery-tilt rose-reveal-frame grain-overlay" style={{ clipPath: 'inset(0 100% 0 0)' }}>
-              <div className="aspect-[4/3] overflow-hidden relative">
-                <LazyImage
-                  src="/images/romantic-couple-vows.jpg"
-                  alt="Couple exchanging vows in candlelight"
-                  className="w-full h-full object-cover ken-burns"
-                />
+              <PhotoRevealFrame
+                id="vows-candlelight"
+                label="THE VOWS"
+                className="aspect-[4/3] block relative overflow-hidden w-full"
+                imageClassName="w-full h-full object-cover ken-burns"
+                src="/images/romantic-couple-vows.jpg"
+                alt="Couple exchanging vows in candlelight"
+              >
                 <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent pointer-events-none" />
                 <div className="absolute bottom-6 left-6">
                   <p className="text-[10px] tracking-[0.4em] uppercase text-[#8B1538]">The Vows</p>
@@ -1022,7 +1048,7 @@ function App() {
                     Words that last forever
                   </p>
                 </div>
-              </div>
+              </PhotoRevealFrame>
             </div>
           </div>
 
@@ -1166,6 +1192,13 @@ function App() {
           </div>
         </div>
       </footer>
+
+      <PhotoZoomModal
+        isOpen={!!zoomedPhoto}
+        onClose={() => setZoomedPhoto(null)}
+        src={zoomedPhoto?.src || ''}
+        alt={zoomedPhoto?.alt || ''}
+      />
     </div>
   )
 }
